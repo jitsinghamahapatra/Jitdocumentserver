@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block content %}
+<h3 class="mb-3">Admin Panel</h3>
+
+<!-- Upload form -->
+<div class="card mb-4" style="background:#f0f0f08a;">
+    <div class="card-body">
+
+        <h5 class="card-title">Upload New Document</h5>
+        <form method="post" enctype="multipart/form-data">
+
+            <div class="mb-3">
+                <label class="form-label">Display Name</label>
+                <input type="text" name="display_name"
+                       class="form-control"
+                       style="background:#e6e6e6ce; color:#000; border:1px solid #000;"
+                       required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">File</label>
+                <input type="file" name="file"
+                       class="form-control"
+                       style="background:#e6e6e6c5; color:#000; border:1px solid #000;"
+                       required>
+            </div>
+
+            <button class="btn btn-success w-100">Upload</button>
+        </form>
+    </div>
+</div>
+
+<h5>All Documents</h5>
+
+<div class="table-responsive">
+<table class="table" style="background:#e1e1e196; min-width:650px; border-radius:8px;">
+    <thead>
+    <tr>
+        <th>#</th>
+        <th>Display Name</th>
+        <th>File</th>
+        <th>Uploaded</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    {% for d in docs %}
+    <tr>
+        <td>{{ loop.index }}</td>
+
+        <td>
+            <form method="post"
+                  action="{{ url_for('edit_doc', doc_id=d.id) }}"
+                  class="d-flex flex-column flex-sm-row gap-2">
+
+                <input type="text" name="display_name"
+                       value="{{ d.display_name }}"
+                       class="form-control form-control-sm"
+                       style="background:#e6e6e6e1; color:#000; border:1px solid #000;">
+
+                <button class="btn btn-sm btn-primary w-100 w-sm-auto">Save</button>
+            </form>
+        </td>
+
+        <td>{{ d.filename }}</td>
+
+        <td>
+            {{ d.uploaded_at.strftime('%d/%m/%Y %H:%M') }}
+        </td>
+
+        <td>
+            <div class="d-flex flex-column flex-sm-row gap-2">
+                <a class="btn btn-sm btn-secondary w-100 w-sm-auto"
+                   href="{{ url_for('download', doc_id=d.id) }}">
+                    Download
+                </a>
+
+                <form method="post"
+                      action="{{ url_for('delete_doc', doc_id=d.id) }}"
+                      class="w-100 w-sm-auto"
+                      onsubmit="return confirm('Delete this document?');">
+
+                    <button class="btn btn-sm btn-danger w-100 w-sm-auto">Delete</button>
+                </form>
+            </div>
+        </td>
+    </tr>
+
+    {% else %}
+    <tr>
+        <td colspan="5" class="text-center text-muted">No documents uploaded yet.</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+
+{% endblock %}
